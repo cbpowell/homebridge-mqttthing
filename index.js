@@ -1502,8 +1502,8 @@ function makeThing(log, config) {
     }
 
     // Characteristic.DoorMoving (mqttthing simplified state)
-    function characteristic_DoorMoving( service, stateValueFunc ) {
-        characteristic_SimpleCurrentDoorState( service, 'doormoving', config.topics.getDoorMoving, false, ( isMoving ) => {
+    function characteristic_DoorMoving( service, topic, stateValueFunc ) {
+        characteristic_SimpleCurrentDoorState( service, 'doormoving', topic, false, ( isMoving ) => {
             if( isMoving ) {
                 if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
                     return Characteristic.CurrentDoorState.OPENING;
@@ -1522,7 +1522,7 @@ function makeThing(log, config) {
     
     // Characteristic.DoorMovingValue (mqttthing simplified state)
     function characteristic_DoorMovingValue( service ) {
-        characteristic_DoorMoving( service, ( message ) => {
+        characteristic_DoorMoving( service, config.topics.getDoorMoving, ( message ) => {
             let newState = false; // assume off
             if( isRecvValueOn( message ) ) {
                 newState = true; // received on value so on
@@ -1537,7 +1537,7 @@ function makeThing(log, config) {
     
     // Characteristic.DoorMovingPosition (mqttthing simplified state)
     function characteristic_DoorMovingPosition( service ) {
-        characteristic_DoorMoving( service, ( message ) => {
+        characteristic_DoorMoving( service, config.topics.getDoorPosition, ( message ) => {
             // Check for non-numeric values
             if( isNaN( message )) {
                 return null;
