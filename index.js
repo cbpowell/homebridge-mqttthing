@@ -1545,7 +1545,7 @@ function makeThing(log, config) {
             
             let newState = false; // assume not moving
             // position is a 0-100 % value, 0 = closed, 100 = open
-            if( ( message % 100 ) > 0 ) ) {
+            if( ( message % 100 ) > 0 ) {
                 // Value is not 0 or 100, so its moving 
                 newState = true;
             }
