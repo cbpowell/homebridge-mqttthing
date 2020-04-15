@@ -1502,7 +1502,7 @@ function makeThing(log, config) {
     }
 
     // Characteristic.DoorMoving (mqttthing simplified state)
-    function characteristic_DoorMoving( service ) {
+    function characteristic_DoorMoving( service, stateValueFunc ) {
         characteristic_SimpleCurrentDoorState( service, 'doormoving', config.topics.getDoorMoving, false, ( isMoving ) => {
             if( isMoving ) {
                 if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
@@ -1517,7 +1517,12 @@ function makeThing(log, config) {
                     return Characteristic.CurrentDoorState.CLOSED;
                 }
             }
-        }, ( message ) => {
+        }, stateValueFunc );
+    }
+    
+    // Characteristic.DoorMovingValue (mqttthing simplified state)
+    function characteristic_DoorMovingValue( service ) {
+        characteristic_DoorMoving( service, ( message ) => {
             let newState = false; // assume off
             if( isRecvValueOn( message ) ) {
                 newState = true; // received on value so on
