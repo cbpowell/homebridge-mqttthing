@@ -2377,8 +2377,10 @@ function makeThing(log, config) {
         } else if( configType == "garageDoorOpener" ) {
             service = new Service.GarageDoorOpener(name);
             characteristic_TargetDoorState(service);
-            if( config.topics.getDoorMoving ) {
-                characteristic_DoorMoving(service);
+            if( config.topics.getDoorPosition ) {
+                characteristic_DoorMovingPosition(service);
+            } else if( config.topics.getDoorMoving ) {
+                characteristic_DoorMovingValue(service);
             } else {
                 characteristic_CurrentDoorState(service);
             }
