@@ -1538,6 +1538,11 @@ function makeThing(log, config) {
     // Characteristic.DoorMovingPosition (mqttthing simplified state)
     function characteristic_DoorMovingPosition( service ) {
         characteristic_DoorMoving( service, ( message ) => {
+            // Check for non-numeric values
+            if( isNaN( message )) {
+                return null;
+            }
+            
             let newState = false; // assume not moving
             // position is a 0-100 % value, 0 = closed, 100 = open
             if( ( message % 100 ) > 0 ) ) {
