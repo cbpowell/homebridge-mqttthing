@@ -1463,7 +1463,7 @@ function makeThing(log, config) {
         multiCharacteristic(service, 'doorcur', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.CLOSED);
     }
 
-    function characteristic_SimpleCurrentDoorState( service, property, getTopic, initialValue, mapValueFunc ) {
+    function characteristic_SimpleCurrentDoorState( service, property, getTopic, initialValue, mapValueFunc, stateValueFunc) {
         // set up characteristic
         var charac = service.getCharacteristic( Characteristic.CurrentDoorState );
         charac.on( 'get', function( callback ) {
@@ -1485,15 +1485,14 @@ function makeThing(log, config) {
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
                 // determine whether this is an on or off value
-                let newState = false; // assume off
-                if( isRecvValueOn( message ) ) {
-                    newState = true; // received on value so on
-                } else if ( ! isRecvValueOff( message ) ) {
-                    // received value NOT acceptable as 'off' so ignore message
-                    return;
-                }
+                // pass message to stateValue handler
+                let newState = stateValueFunc(message); // eval message with handler
 
                 // if changed, set
+                if( newState == null ) {
+                    return;
+                }
+                
                 if( state[ property ] != newState ) {
                     state[ property ] = newState;
                     propChangedHandler();
@@ -1518,6 +1517,16 @@ function makeThing(log, config) {
                     return Characteristic.CurrentDoorState.CLOSED;
                 }
             }
+        }, ( message ) => {
+            let newState = false; // assume off
+            if( isRecvValueOn( message ) ) {
+                newState = true; // received on value so on
+            } else if ( ! isRecvValueOff( message ) ) {
+                // received value NOT acceptable as 'off' so ignore message
+                return null;
+            }
+            // Return determined state value
+            return newState;
         } );
     }
 
