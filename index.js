@@ -1534,6 +1534,20 @@ function makeThing(log, config) {
             return newState;
         } );
     }
+    
+    // Characteristic.DoorMovingPosition (mqttthing simplified state)
+    function characteristic_DoorMovingPosition( service ) {
+        characteristic_DoorMoving( service, ( message ) => {
+            let newState = false; // assume not moving
+            // position is a 0-100 % value, 0 = closed, 100 = open
+            if( ( message % 100 ) > 0 ) ) {
+                // Value is not 0 or 100, so its moving 
+                newState = true;
+            }
+            // Return determined state value
+            return newState;
+        } );
+    }
 
     // Characteristic.TargetDoorState
     function characteristic_TargetDoorState(service) {
