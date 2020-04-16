@@ -982,6 +982,7 @@ function makeThing(log, config) {
         // Homekit get
         if (!eventOnly) {
             charac.on('get', function (callback) {
+                log( 'Homekit Request for: ' + property + ', at state: ' + state[ property ] );
                 handleGetStateCallback( callback, state[ property ] );
             });
         }
@@ -1467,12 +1468,14 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic( Characteristic.CurrentDoorState );
         charac.on( 'get', function( callback ) {
+            log( 'Homekit Request for: ' + property + ', at state: ' + state[ property ] );
             handleGetStateCallback( callback, mapValueFunc( state[ property ] ) );
         } );
 
         // property-changed handler
         let propChangedHandler = events.doortar = function() {
             setTimeout( () => {
+                log( 'Property changed for: ' + property );
                 charac.setValue( mapValueFunc( state[ property ] ), undefined, c_mySetContext );
             }, 1000 );
         };
